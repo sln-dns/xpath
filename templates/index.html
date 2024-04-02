@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Showcase xpath</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-container, .example-container {
+            flex: 1;
+            padding: 10px;
+        }
+        .form-container {
+            margin-right: -40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Market research form</h1>
+    <div class="container">
+        <div class="form-container">
+            <form id="marketResearchForm">
+                <p>
+                    <br><br>Conduct market research using <br><br>
+                    <select name="researchMethod">
+                        <option value="benchmarking">benchmarking</option>
+                        <option value="evaluate">evaluate</option>
+                    </select> method, <br> <br>
+                    in the <input type="text" name="marketName" placeholder="name of the market"> market, <br><br>
+                    that <input type="text" name="mainAdvantage" placeholder="main advantage">,<br><br>
+                    in the <input type="text" name="geographicalMarket" placeholder="geographical market">,<br><br>
+                    to identify the major competitors and evaluate their strategies and channels, <br><br>
+                    in order to <input type="text" name="researchAim" placeholder="aim of the research">.<br><br>
+                </p>
+                <button type="submit" id="submitBtn">Submit</button>
+            </form>
+        </div>
+
+        <div class="example-container">
+            <h2>Example of Completion</h2>
+            <p>
+                Conduct market research using <br> <br>the benchmarking method, <br><br>
+                in the <strong>cloud computing services</strong> market, <br><br>
+                that specializes in <strong>AI and machine learning tools</strong> <br><br>
+                in the <strong>global</strong> geographical market, <br><br>
+                to identify the major competitors and their products' features and evaluate their strategies and channels, <br><br>
+                in order to <strong>differentiate our offerings and target niche markets</strong>.<br><br>
+            </p>
+        </div>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("marketResearchForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true; // Отключаем кнопку при начале отправки запроса
+    
+            const formData = new FormData(event.target);
+            const formDataObj = Object.fromEntries(formData.entries());
+    
+            const fullText = `Conduct market research using ${formDataObj.researchMethod} method, in the ${formDataObj.marketName} market, that ${formDataObj.mainAdvantage}, in the ${formDataObj.geographicalMarket}, to identify the major competitors and evaluate their strategies and channels, in order to ${formDataObj.researchAim}.`;
+    
+            fetch("/full", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({text: fullText}),
+            })
+            .then(response => response.text()) // Используем .text() вместо .json()
+            .then(text => {
+                // Отображаем прямо тело ответа сервера как есть
+                document.getElementById('result').textContent = text;
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                document.getElementById('result').textContent = 'Произошла ошибка при запросе';
+            })
+            .finally(() => {
+                submitBtn.disabled = false; // Включаем кнопку обратно после завершения запроса
+            });
+        });
+    </script>
+    
+
+
+
+
+
+</body>
+</html>
